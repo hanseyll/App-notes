@@ -1,38 +1,13 @@
-const express = require('express');
-const path = require('path');
-const exphbs =  require('express-handlebars')
-const methodOverride= require('method-override');
-const session=require('express-session')
-//Initializations
-const app = express();
+import app from "./app.js";
+import { createAdminUser } from "./libs/createUser.js";
+import "./database.js";
 
-//Settings
-app.set('port',process.env.PORT ||3000)
-app.set('views', path.join(__dirname,'views'))
-app.engine('.hbs',exphbs({
-    defaultLayout: 'main',
-    LayoutsDir:path.join(app.get('views'),'layouts'),
-    partialsDir:path.join(app.get('views','partials')),
-    extname: '.hbs'
-}))
-app.set('view engine','.hbs')
-//Middlewares
-app.use(express.urlencoded({extended:false}))
-app.use(methodOverride('_method'));
-app.use(session({
-    secret:'mysecretapp',
-    resave:true,
-saveUninitialized:true}))
-//Global Variables
+async function main() {
+  await createAdminUser();
+  app.listen(app.get("port"));
 
-//Routes
+  console.log("Server on port", app.get("port"));
+  console.log("Environment:", process.env.NODE_ENV);
+}
 
-//Static Files
-
-//Server is listenning
-app.listen(app.get('port'),() =>{
-    console.log('server on port')
-});
-
-
-
+main();
